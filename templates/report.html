@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Periodontal Report</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+            color: #2c3e50;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f4e79;
+        }
+
+        h2 {
+            border-bottom: 2px solid #1f4e79;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        .grid {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .box {
+            width: 48%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: #1f4e79;
+            color: white;
+            padding: 8px;
+        }
+
+        td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .highlight {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        .note {
+            margin-top: 30px;
+            font-size: 12px;
+            color: gray;
+        }
+
+        .btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #1f4e79;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>PERIODONTAL AI ASSESSMENT REPORT</h1>
+
+<!-- DEMOGRAPHICS -->
+<h2>Patient Information</h2>
+<div class="grid">
+    <div class="box">
+        <p><b>Name:</b> <span id="r_name"></span></p>
+        <p><b>Age:</b> <span id="r_age"></span></p>
+        <p><b>Gender:</b> <span id="r_gender"></span></p>
+    </div>
+
+    <div class="box">
+        <p><b>Patient ID:</b> <span id="r_id"></span></p>
+        <p><b>Medical History:</b> <span id="r_history"></span></p>
+        <p><b>Medication:</b> <span id="r_medication"></span></p>
+    </div>
+</div>
+
+<!-- CLINICAL TABLE -->
+<h2>Clinical Periodontal Chart</h2>
+
+<table id="reportTable">
+    <tr>
+        <th>Tooth</th>
+        <th>PD</th>
+        <th>CAL</th>
+        <th>BOP</th>
+        <th>Recession</th>
+        <th>Furcation</th>
+        <th>Enlargement</th>
+    </tr>
+</table>
+
+<!-- AI -->
+<h2>AI Analysis</h2>
+
+<p><b>Uploaded Image:</b></p>
+<img id="r_image" width="300">
+
+<p><b>AI Findings:</b></p>
+<ul id="r_findings"></ul>
+
+<!-- DIAGNOSIS -->
+<h2>Diagnosis</h2>
+<p id="r_diagnosis" class="highlight"></p>
+
+<!-- MANAGEMENT -->
+<h2>Management Recommendation</h2>
+<p id="r_management" class="highlight"></p>
+
+<p class="note">
+This report is AI-assisted and should be confirmed by a dental professional.
+</p>
+
+<button class="btn" onclick="window.print()">Download PDF</button>
+
+<script>
+/* LOAD DATA FROM LOCAL STORAGE */
+let data = JSON.parse(localStorage.getItem("reportData"))
+
+if(data){
+    document.getElementById("r_name").innerText = data.name
+    document.getElementById("r_age").innerText = data.age
+    document.getElementById("r_gender").innerText = data.gender
+    document.getElementById("r_id").innerText = data.id
+    document.getElementById("r_history").innerText = data.history
+    document.getElementById("r_medication").innerText = data.medication
+
+    document.getElementById("r_diagnosis").innerText = data.diagnosis
+    document.getElementById("r_management").innerText = data.management
+
+    document.getElementById("r_image").src = data.image
+
+    /* AI findings */
+    let ul = document.getElementById("r_findings")
+    data.findings.forEach(f => {
+        let li = document.createElement("li")
+        li.innerText = f
+        ul.appendChild(li)
+    })
+
+    /* TABLE */
+    let table = document.getElementById("reportTable")
+
+    data.teeth.forEach(t => {
+        let row = table.insertRow()
+
+        row.innerHTML = `
+            <td>${t.tooth}</td>
+            <td>${t.pd}</td>
+            <td>${t.cal}</td>
+            <td>${t.bop}</td>
+            <td>${t.rec}</td>
+            <td>${t.furcation}</td>
+            <td>${t.enl}</td>
+        `
+    })
+}
+</script>
+
+</body>
+</html>
