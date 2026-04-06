@@ -150,14 +150,14 @@ def report():
 @app.route("/analyze", methods=["POST"])
 def analyze():
 
-    file = request.files["image"]
-    
-     if file is None:
+    file = request.files.get("image")
+
+    if file is None:
         return jsonify({
             "findings": ["No image uploaded"],
             "output_image": ""
         })
-         
+
     path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(path)
 
