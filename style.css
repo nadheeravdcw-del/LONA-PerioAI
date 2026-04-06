@@ -1,0 +1,128 @@
+/* ===== Body Styling ===== */
+body {
+    font-family: "Times New Roman", serif;
+    background: linear-gradient(135deg, #FFF6F9, #FFE4EC);
+    color: #1a1a1a;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== Stage Boxes ===== */
+.stage {
+    background: rgba(255, 255, 255, 0.95); /* slightly transparent white */
+    color: #1a1a1a;
+    padding: 25px;
+    margin: 20px auto;
+    width: 70%;
+    border-radius: 12px;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Navigation Buttons ===== */
+.nav button {
+    padding: 10px 20px;
+    margin: 5px;
+    background: #e55ac3; /* soft purple */
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav button:hover {
+    background: #6f42c1; /* slightly darker purple on hover */
+    transform: scale(1.05);
+}
+
+/* ===== Grid Layout ===== */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.full {
+    grid-column: 1 / 3;
+}
+
+/* ===== Tooth Chart Styling ===== */
+.tooth-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+
+.tooth {
+    background: #dbe7ff; /* soft blue background */
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tooth:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* ===== Tooth Status Colors ===== */
+.green { background: #9cff9c; }
+.orange { background: #ffc870; }
+.red { background: #ff7b7b; }
+
+/* ===== Popup Styling ===== */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+/* ===== Site Grid (for PD inputs) ===== */
+.site-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 80px);
+    gap: 10px;
+    justify-content: center;
+}
+
+/* ===== Inputs and Selects ===== */
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-family: "Times New Roman", serif;
+}
+
+/* ===== AI Button Styling ===== */
+button {
+    padding: 10px 18px;
+    border-radius: 6px;
+    border: none;
+    background: #00cfff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: #00a6d6;
+    transform: scale(1.05);
+}
+
