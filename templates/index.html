@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>AI Periodontal Assessment Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<h1>AI Periodontal Assessment Tool</h1>
+
+<div class="nav">
+    <button onclick="showStage(1)">Demographics</button>
+    <button onclick="showStage(2)">Clinical Chart</button>
+    <button onclick="showStage(3)">AI Analysis</button>
+    <button onclick="showStage(4)">Diagnosis</button>
+    <button onclick="showStage(5)">View Saved Charts</button>
+</div>
+
+<!-- STAGE 1 -->
+<div id="stage1" class="stage">
+    <h2>Patient Demographics</h2>
+
+    <div class="grid">
+        <div>
+            <label>Name</label>
+            <input type="text" id="patientName">
+        </div>
+
+        <div>
+            <label>Age</label>
+            <input type="number" id="age">
+        </div>
+
+        <div>
+            <label>Gender</label>
+            <select id="gender">
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Patient ID</label>
+            <input type="text" id="patientId">
+        </div>
+
+        <div class="full">
+            <label>Medical History</label>
+            <textarea id="medicalHistory"></textarea>
+        </div>
+
+        <div class="full">
+            <label>Medication</label>
+            <input type="text" id="medication">
+        </div>
+    </div>
+
+    <br>
+    <button onclick="showStage(2)">Next</button>
+</div>
+
+<!-- STAGE 2 -->
+<div id="stage2" class="stage" style="display:none">
+    <h2>Periodontal Chart</h2>
+    <div class="tooth-row">
+        <!-- Teeth upper right -->
+        <div class="tooth" id="t18" onclick="openTooth(18)">🦷18</div>
+        <div class="tooth" id="t17" onclick="openTooth(17)">🦷17</div>
+        <div class="tooth" id="t16" onclick="openTooth(16)">🦷16</div>
+        <div class="tooth" id="t15" onclick="openTooth(15)">🦷15</div>
+        <div class="tooth" id="t14" onclick="openTooth(14)">🦷14</div>
+        <div class="tooth" id="t13" onclick="openTooth(13)">🦷13</div>
+        <div class="tooth" id="t12" onclick="openTooth(12)">🦷12</div>
+        <div class="tooth" id="t11" onclick="openTooth(11)">🦷11</div>
+        <span>|</span>
+        <!-- Teeth upper left -->
+        <div class="tooth" id="t21" onclick="openTooth(21)">🦷21</div>
+        <div class="tooth" id="t22" onclick="openTooth(22)">🦷22</div>
+        <div class="tooth" id="t23" onclick="openTooth(23)">🦷23</div>
+        <div class="tooth" id="t24" onclick="openTooth(24)">🦷24</div>
+        <div class="tooth" id="t25" onclick="openTooth(25)">🦷25</div>
+        <div class="tooth" id="t26" onclick="openTooth(26)">🦷26</div>
+        <div class="tooth" id="t27" onclick="openTooth(27)">🦷27</div>
+        <div class="tooth" id="t28" onclick="openTooth(28)">🦷28</div>
+    </div>
+
+    <hr>
+
+    <div class="tooth-row">
+        <!-- Teeth lower right -->
+        <div class="tooth" id="t48" onclick="openTooth(48)">🦷48</div>
+        <div class="tooth" id="t47" onclick="openTooth(47)">🦷47</div>
+        <div class="tooth" id="t46" onclick="openTooth(46)">🦷46</div>
+        <div class="tooth" id="t45" onclick="openTooth(45)">🦷45</div>
+        <div class="tooth" id="t44" onclick="openTooth(44)">🦷44</div>
+        <div class="tooth" id="t43" onclick="openTooth(43)">🦷43</div>
+        <div class="tooth" id="t42" onclick="openTooth(42)">🦷42</div>
+        <div class="tooth" id="t41" onclick="openTooth(41)">🦷41</div>
+        <span>|</span>
+        <!-- Teeth lower left -->
+        <div class="tooth" id="t31" onclick="openTooth(31)">🦷31</div>
+        <div class="tooth" id="t32" onclick="openTooth(32)">🦷32</div>
+        <div class="tooth" id="t33" onclick="openTooth(33)">🦷33</div>
+        <div class="tooth" id="t34" onclick="openTooth(34)">🦷34</div>
+        <div class="tooth" id="t35" onclick="openTooth(35)">🦷35</div>
+        <div class="tooth" id="t36" onclick="openTooth(36)">🦷36</div>
+        <div class="tooth" id="t37" onclick="openTooth(37)">🦷37</div>
+        <div class="tooth" id="t38" onclick="openTooth(38)">🦷38</div>
+    </div>
+
+    <br>
+    <p id="bopPrev"></p>
+    <button onclick="showStage(3)">Next</button>
+</div>
+
+<!-- TOOTH POPUP -->
+<div id="popup" class="popup">
+    <h3 id="toothTitle"></h3>
+
+    <label>Probing Depth (6 sites)</label>
+    <div class="site-grid">
+        <input type="number" id="pd1" placeholder="MB" oninput="updateCAL()">
+        <input type="number" id="pd2" placeholder="B" oninput="updateCAL()">
+        <input type="number" id="pd3" placeholder="DB" oninput="updateCAL()">
+        <input type="number" id="pd4" placeholder="ML" oninput="updateCAL()">
+        <input type="number" id="pd5" placeholder="L" oninput="updateCAL()">
+        <input type="number" id="pd6" placeholder="DL" oninput="updateCAL()">
+    </div>
+
+    <label>Recession</label>
+    <input type="number" id="rec" oninput="updateCAL()">
+
+    <label>Gingival Enlargement</label>
+    <input type="number" id="enl" oninput="updateCAL()">
+
+    <p id="calDisplay">CAL: 0 mm</p>
+
+    <label>BOP (Mombelli)</label>
+    <select id="bop">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+    </select>
+
+    <label>Furcation</label>
+    <select>
+        <option>None</option>
+        <option>Grade I</option>
+        <option>Grade II</option>
+        <option>Grade III</option>
+        <option>Grade IV</option>
+    </select>
+
+    <br><br>
+    <button onclick="saveTooth()">Save</button>
+    <button onclick="closePopup()">Close</button>
+</div>
+
+<!-- STAGE 3 -->
+<div id="stage3" class="stage" style="display:none">
+    <h2>🧠 AI Mucogingival Analysis</h2>
+
+    <p>Upload intraoral image</p>
+    <input type="file" id="imageUpload">
+
+    <br><br>
+    <button onclick="runAI()">Run AI Analysis</button>
+
+    <br><br>
+    <button onclick="showStage(4)">Next</button>
+
+    <!-- Findings Section -->
+    <div class="card">
+        <h3>AI Findings</h3>
+        <ul id="findings"></ul>
+    </div>
+
+    <!-- Output Image Section -->
+    <div class="card">
+        <h3>AI Output</h3>
+        <img id="resultImage" style="max-width: 400px; display:none; border-radius:10px; margin-top:10px;">
+    </div>
+</div>
+
+
+<!-- STAGE 4 -->
+<div id="stage4" class="stage" style="display:none">
+    <h2>Diagnosis</h2>
+    <button onclick="generateDiagnosis()">Generate Diagnosis</button>
+    <p id="diagnosis"></p>
+
+    <button onclick="savePatientData()">💾 Save</button>
+
+    <br><br>
+    <button onclick="showStage(5)">Next</button>
+</div>
+
+<!-- STAGE 5 -->
+<div id="stage5" class="stage" style ="display:none">
+    <h2>Saved Clinical Charts</h2>
+
+    <button onclick="loadPatients()">Load Patients</button>
+
+    <div id="patientList"></div>
+</div>
+
+<!-- jsPDF library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- LINK JS FILE -->
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
