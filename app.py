@@ -77,7 +77,11 @@ def analyze_with_ai(image_path):
     if model is None:
         return ["Model not loaded"], None
        
-    pred = model.predict(img_input)[0]
+    try:
+        pred = model.predict(img_input)[0]
+    except Exception as e:
+        print("ERROR:", e)
+        return ["AI failed"], None
     pred_mask = np.argmax(pred, axis=-1)
 
     print("Unique classes:", np.unique(pred_mask))
@@ -147,6 +151,13 @@ def report():
 def analyze():
 
     file = request.files["image"]
+    
+     if file is None:
+        return jsonify({
+            "findings": ["No image uploaded"],
+            "output_image": ""
+        })
+         
     path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(path)
 
