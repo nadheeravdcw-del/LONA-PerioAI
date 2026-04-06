@@ -16,7 +16,14 @@ def uploaded_file(filename):
 # LOAD MODEL
 # =========================
 IMG_SIZE = 128
-model = load_model("unet_model.h5", compile=False)
+model = None
+
+try:
+    model_path = os.path.join(os.getcwd(), "unet_model.h5")
+    model = load_model(model_path, compile=False)
+    print("✅ Model loaded successfully")
+except Exception as e:
+    print("❌ Model loading failed:", e)
 
 # =========================
 # COLORS
@@ -67,6 +74,9 @@ def analyze_with_ai(image_path):
     # =========================
     # PREDICT
     # =========================
+   if model is None:
+        return ["Model not loaded"], None
+       
     pred = model.predict(img_input)[0]
     pred_mask = np.argmax(pred, axis=-1)
 
