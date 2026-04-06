@@ -74,7 +74,7 @@ def analyze_with_ai(image_path):
     # =========================
     # PREDICT
     # =========================
-   if model is None:
+    if model is None:
         return ["Model not loaded"], None
        
     pred = model.predict(img_input)[0]
