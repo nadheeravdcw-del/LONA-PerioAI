@@ -76,6 +76,18 @@ body {
 .orange { background: #ffc870; }
 .red { background: #ff7b7b; }
 
+/* ===== Missing Tooth (EFP tooth-loss tracking) ===== */
+.tooth.missing {
+    background: #555 !important;
+    color: #fff;
+    text-decoration: line-through;
+    cursor: pointer;
+    opacity: 0.85;
+}
+.tooth.missing:hover {
+    opacity: 1;
+}
+
 /* ===== Popup Styling ===== */
 .popup {
     display: none;
@@ -125,4 +137,3 @@ button:hover {
     background: #00a6d6;
     transform: scale(1.05);
 }
-
