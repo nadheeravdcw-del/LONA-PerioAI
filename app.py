@@ -1,182 +1,238 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory
-import cv2
-import numpy as np
 import os
-from tensorflow.keras.models import load_model
+import base64
+import json
+import traceback
+
+from full_pipeline import analyze_image
+from bone_pipeline import analyze_radiograph_image
 
 app = Flask(__name__)
+
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# =========================
+# MEMORY STORAGE
+# =========================
+patients = []
+current_patient = {}
+
+# =========================
+# IMAGE TO BASE64
+# =========================
+def image_to_base64(image_path):
+
+    if not image_path or not os.path.exists(image_path):
+        return ""
+
+    with open(image_path, "rb") as img:
+        encoded = base64.b64encode(img.read()).decode("utf-8")
+
+    ext = image_path.split(".")[-1]
+
+    return f"data:image/{ext};base64,{encoded}"
+
+# =========================
+# HOME
+# =========================
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+# =========================
+# SERVE UPLOADS
+# =========================
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 # =========================
-# LOAD MODEL
+# INTRAORAL AI PIPELINE
 # =========================
-IMG_SIZE = 128
-model = None
-
-try:
-    model_path = os.path.join(os.getcwd(), "unet_model.h5")
-    model = load_model(model_path, compile=False)
-    print("✅ Model loaded successfully")
-except Exception as e:
-    print("❌ Model loading failed:", e)
-
-# =========================
-# COLORS
-# =========================
-COLORS = {
-    0: [0, 0, 0],        # background
-    1: [0, 255, 0],      # gingiva
-    2: [0, 255, 255],    # plaque
-}
-
-# =========================
-# 🔥 RECESSION DETECTION (RULE BASED)
-# =========================
-def detect_recession_rule_based(image):
-
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
-    # Pale root detection
-    lower = np.array([0, 0, 180])
-    upper = np.array([180, 60, 255])
-
-    mask = cv2.inRange(hsv, lower, upper)
-
-    kernel = np.ones((5,5), np.uint8)
-    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
-
-    ratio = cv2.countNonZero(mask) / (image.shape[0] * image.shape[1])
-
-    return ratio, mask
-
-# =========================
-# MAIN AI FUNCTION
-# =========================
-def analyze_with_ai(image_path):
-
-    image = cv2.imread(image_path)
-
-    if image is None:
-        return ["Error loading image"], None
-
-    original = image.copy()
-
-    # Resize for model
-    img_resized = cv2.resize(image, (IMG_SIZE, IMG_SIZE))
-    img_input = img_resized / 255.0
-    img_input = np.expand_dims(img_input, axis=0)
-
-    # =========================
-    # PREDICT
-    # =========================
-    if model is None:
-        return ["Model not loaded"], None
-       
-    try:
-        pred = model.predict(img_input)[0]
-    except Exception as e:
-        print("ERROR:", e)
-        return ["AI failed"], None
-    pred_mask = np.argmax(pred, axis=-1)
-
-    print("Unique classes:", np.unique(pred_mask))
-
-    # Resize back
-    pred_mask = cv2.resize(pred_mask.astype(np.uint8),
-                           (original.shape[1], original.shape[0]),
-                           interpolation=cv2.INTER_NEAREST)
-
-    # =========================
-    # 🔥 RECESSION DETECTION
-    # =========================
-    recession_ratio, recession_mask = detect_recession_rule_based(original)
-
-    # =========================
-    # CREATE OVERLAY
-    # =========================
-    colored_mask = np.zeros_like(original)
-
-    for cls, color in COLORS.items():
-        colored_mask[pred_mask == cls] = color
-
-    # 🔥 ADD RECESSION (BLUE)
-    colored_mask[recession_mask > 0] = [255, 0, 0]
-
-    overlay = cv2.addWeighted(original, 0.7, colored_mask, 0.3, 0)
-
-    # =========================
-    # CLINICAL LOGIC
-    # =========================
-    total_pixels = pred_mask.size
-
-    plaque_ratio = np.sum(pred_mask == 2) / total_pixels
-    gingiva_ratio = np.sum(pred_mask == 1) / total_pixels
-
-    findings = []
-
-    if plaque_ratio > 0.01:
-        findings.append("Plaque detected")
-
-    if recession_ratio > 0.05:
-        findings.append("Gingival recession detected")
-
-    if gingiva_ratio < 0.05:
-        findings.append("Inadequate attached gingiva")
-    else:
-        findings.append("Attached gingiva adequate")
-
-    if len(findings) == 1 and "adequate" in findings[0]:
-        findings = ["Healthy periodontium"]
-
-    return findings, overlay
-
-# =========================
-# ROUTES
-# =========================
-
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-@app.route("/report")
-def report():
-    return render_template("report.html")
-
 @app.route("/analyze", methods=["POST"])
 def analyze():
 
-    file = request.files.get("image")
+    global current_patient
 
-    if file is None:
+    try:
+        file = request.files.get("image")
+
+        if not file:
+            return jsonify({
+                "status": "error",
+                "message": "No image uploaded"
+            }), 400
+
+        # =========================
+        # SAVE IMAGE
+        # =========================
+        path = os.path.join(UPLOAD_FOLDER, "intra_" + file.filename)
+        file.save(path)
+
+        # =========================
+        # CLINICAL CHART (optional)
+        # =========================
+        clinical_chart = json.loads(
+            request.form.get("clinical_chart", "[]")
+        )
+
+        # =========================
+        # SCALE (IMPORTANT FIX)
+        # =========================
+        mm_per_pixel = request.form.get("mm_per_pixel")
+
+        if mm_per_pixel is not None and mm_per_pixel != "":
+            try:
+                mm_per_pixel = float(mm_per_pixel)
+            except:
+                mm_per_pixel = None
+        else:
+            mm_per_pixel = None
+
+        print("🔍 mm_per_pixel received:", mm_per_pixel)
+
+        # =========================
+        # RUN PIPELINE
+        # =========================
+        try:
+            results, output_img = analyze_image(path, mm_per_pixel)
+        except Exception as pipeline_error:
+            print("PIPELINE ERROR:", pipeline_error)
+            traceback.print_exc()
+
+            return jsonify({
+                "status": "error",
+                "message": "AI pipeline failed",
+                "details": str(pipeline_error)
+            }), 500
+
+        if results is None:
+            results = []
+
+        # =========================
+        # STORE PATIENT DATA
+        # =========================
+        current_patient["clinical_image"] = image_to_base64(path)
+        current_patient["findings"] = results
+
+        # store full AGW list (not just first tooth)
+        current_patient["attached_gingiva"] = [
+            r.get("attached_gingiva_width_mm")
+            for r in results
+        ]
+
         return jsonify({
-            "findings": ["No image uploaded"],
-            "output_image": ""
+            "status": "success",
+            "results": results,
+            "output_image": "/uploads/" + os.path.basename(path)
         })
 
-    path = os.path.join(UPLOAD_FOLDER, file.filename)
-    file.save(path)
+    except Exception as e:
 
-    findings, overlay = analyze_with_ai(path)
+        print("🔥 SERVER ERROR:", str(e))
+        traceback.print_exc()
 
-    filename = "output_" + file.filename
-    output_path = os.path.join(UPLOAD_FOLDER, filename)
-
-    if overlay is not None:
-        cv2.imwrite(output_path, overlay)
-
-    return jsonify({
-        "findings": findings,
-        "output_image": "uploads/" + filename
-    })
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 
 # =========================
-# RUN
+# RADIOGRAPH AI
+# =========================
+@app.route("/analyze_radiograph", methods=["POST"])
+def analyze_radiograph():
+
+    global current_patient
+
+    try:
+        file = request.files.get("image")
+
+        if not file:
+            return jsonify({
+                "status": "error",
+                "message": "No image uploaded"
+            }), 400
+
+        path = os.path.join(UPLOAD_FOLDER, "rx_" + file.filename)
+        file.save(path)
+
+        result = analyze_radiograph_image(path) or {}
+
+        current_patient["radiographic_image"] = image_to_base64(path)
+        current_patient["bone_loss"] = result.get("bone_loss", 0)
+        current_patient["efp_stage"] = result.get("efp_stage", "-")
+
+        return jsonify({
+            "status": "success",
+            "bone_loss": current_patient["bone_loss"],
+            "efp_stage": current_patient["efp_stage"]
+        })
+
+    except Exception as e:
+
+        print("RADIOGRAPH ERROR:", str(e))
+
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
+# =========================
+# SAVE PATIENT
+# =========================
+@app.route("/save_patient", methods=["POST"])
+def save_patient():
+
+    global current_patient
+    global patients
+
+    try:
+        data = request.json
+
+        if not data:
+            return jsonify({
+                "status": "error",
+                "message": "No data received"
+            }), 400
+
+        current_patient.update(data)
+        patients.append(current_patient.copy())
+        current_patient = {}
+
+        return jsonify({
+            "status": "saved",
+            "total_patients": len(patients)
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
+# =========================
+# GET PATIENTS
+# =========================
+@app.route("/patients")
+def get_patients():
+    return jsonify(patients)
+
+# =========================
+# REPORT PAGE
+# =========================
+@app.route("/report/<int:index>")
+def report(index):
+
+    if index < 0 or index >= len(patients):
+        return "Patient not found", 404
+
+    return render_template("report.html", data=patients[index])
+
+# =========================
+# RUN SERVER
 # =========================
 if __name__ == "__main__":
-     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
-        
+    app.run(host="0.0.0.0", port=5000, debug=True)
