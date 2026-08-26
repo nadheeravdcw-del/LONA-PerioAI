@@ -1,176 +1,2113 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Periodontal Report</title>
 
-    <style>
-        body {
-            font-family: Arial;
-            margin: 40px;
-            color: #2c3e50;
-        }
+<meta charset="UTF-8">
 
-        h1 {
-            text-align: center;
-            color: #1f4e79;
-        }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        h2 {
-            border-bottom: 2px solid #1f4e79;
-            padding-bottom: 5px;
-            margin-top: 30px;
-        }
+<title>LONA-PerioAI | Periodontal Assessment Report</title>
 
-        .grid {
-            display: flex;
-            justify-content: space-between;
-        }
 
-        .box {
-            width: 48%;
-        }
+<style>
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
+/* =========================================================
+   GLOBAL
+========================================================= */
 
-        th {
-            background: #1f4e79;
-            color: white;
-            padding: 8px;
-        }
+*{
+    box-sizing:border-box;
+    font-family:"Times New Roman", Times, serif;
+}
 
-        td {
-            border: 1px solid #ccc;
-            padding: 6px;
-            text-align: center;
-        }
+html,
+body{
+    margin:0;
+    padding:0;
+}
 
-        .highlight {
-            color: #c0392b;
-            font-weight: bold;
-        }
+body{
+    padding:30px;
 
-        .note {
-            margin-top: 30px;
-            font-size: 12px;
-            color: gray;
-        }
+    background:#eef2f5;
 
-        .btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #1f4e79;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+    color:#263238;
+
+    font-size:14px;
+
+    line-height:1.45;
+}
+
+
+/* =========================================================
+   REPORT CONTAINER
+========================================================= */
+
+.report-container{
+
+    width:210mm;
+
+    min-height:297mm;
+
+    margin:auto;
+
+    background:#ffffff;
+
+    padding:22mm 18mm;
+
+    box-shadow:0 8px 35px rgba(0,0,0,0.12);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding-bottom:18px;
+
+    border-bottom:3px solid #176b87;
+
+    margin-bottom:25px;
+}
+
+
+.brand{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+}
+
+
+.logo{
+
+    width:55px;
+
+    height:55px;
+
+    border-radius:12px;
+
+    background:linear-gradient(
+        135deg,
+        #176b87,
+        #23a6a8
+    );
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:22px;
+
+    font-weight:bold;
+}
+
+
+.header h1{
+
+    margin:0;
+
+    font-size:24px;
+
+    letter-spacing:0.5px;
+
+    color:#174b61;
+}
+
+
+.header .subtitle{
+
+    margin-top:4px;
+
+    color:#607d8b;
+
+    font-size:12px;
+}
+
+
+.report-meta{
+
+    text-align:right;
+
+    font-size:11px;
+
+    color:#607d8b;
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.section{
+
+    margin-top:24px;
+}
+
+
+.section-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    background:#f1f7f9;
+
+    border-left:5px solid #176b87;
+
+    padding:9px 13px;
+
+    margin-bottom:12px;
+
+    color:#174b61;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    letter-spacing:0.2px;
+}
+
+
+.section-number{
+
+    width:24px;
+
+    height:24px;
+
+    border-radius:50%;
+
+    background:#176b87;
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:11px;
+
+    font-weight:bold;
+}
+
+
+/* =========================================================
+   PATIENT INFORMATION
+========================================================= */
+
+.info-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr 1fr;
+
+    gap:10px;
+}
+
+
+.info-box{
+
+    background:#fafcfd;
+
+    padding:12px 14px;
+
+    border-radius:8px;
+
+    border:1px solid #dce6ea;
+}
+
+
+.info-label{
+
+    display:block;
+
+    font-size:10px;
+
+    text-transform:uppercase;
+
+    letter-spacing:0.6px;
+
+    color:#78909c;
+
+    margin-bottom:4px;
+}
+
+
+.info-value{
+
+    font-size:13px;
+
+    font-weight:bold;
+
+    color:#263238;
+
+    word-break:break-word;
+}
+
+
+/* =========================================================
+   DIAGNOSIS
+========================================================= */
+
+.diagnosis-box{
+
+    border:1px solid #c9dfe5;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+    background:#f8fcfd;
+}
+
+
+.diagnosis-header{
+
+    background:#176b87;
+
+    color:white;
+
+    padding:11px 15px;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+    letter-spacing:0.3px;
+}
+
+
+.diagnosis-body{
+
+    padding:18px;
+}
+
+
+.diagnosis-main{
+
+    font-size:21px;
+
+    font-weight:bold;
+
+    color:#174b61;
+
+    margin-bottom:15px;
+}
+
+
+.diagnosis-details{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:10px;
+}
+
+
+.diagnosis-item{
+
+    background:white;
+
+    border:1px solid #e0e8eb;
+
+    border-radius:7px;
+
+    padding:10px;
+
+    text-align:center;
+}
+
+
+.diagnosis-item .label{
+
+    display:block;
+
+    font-size:10px;
+
+    color:#78909c;
+
+    text-transform:uppercase;
+
+    margin-bottom:5px;
+}
+
+
+.diagnosis-item .value{
+
+    font-size:14px;
+
+    font-weight:bold;
+
+    color:#263238;
+}
+
+
+/* =========================================================
+   IMAGES
+========================================================= */
+
+.image-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:15px;
+}
+
+
+.image-card{
+
+    border:1px solid #dce6ea;
+
+    border-radius:10px;
+
+    padding:10px;
+
+    background:#fafcfd;
+
+    text-align:center;
+}
+
+
+.image-card h3{
+
+    margin:3px 0 9px;
+
+    font-size:12px;
+
+    color:#455a64;
+
+    font-weight:bold;
+}
+
+
+.image-card img{
+
+    width:100%;
+
+    max-height:260px;
+
+    object-fit:contain;
+
+    border-radius:6px;
+
+    border:1px solid #d8e0e3;
+
+    background:white;
+}
+
+
+/* =========================================================
+   AI FINDINGS
+========================================================= */
+
+.findings-box{
+
+    background:#fbfdfe;
+
+    border:1px solid #dce6ea;
+
+    border-radius:9px;
+
+    padding:13px 18px;
+}
+
+
+.findings-box ul{
+
+    margin:0;
+
+    padding-left:20px;
+}
+
+
+.findings-box li{
+
+    margin-bottom:7px;
+
+    color:#37474f;
+}
+
+
+.findings-box li:last-child{
+
+    margin-bottom:0;
+}
+
+
+/* =========================================================
+   ATTACHED GINGIVA INTRO
+========================================================= */
+
+.gingiva-intro{
+
+    background:#f8fbfc;
+
+    border:1px solid #dce6ea;
+
+    border-radius:8px;
+
+    padding:12px 15px;
+
+    margin-bottom:12px;
+
+    color:#37474f;
+
+    font-size:12px;
+}
+
+
+.gingiva-intro b{
+
+    font-size:13px;
+
+    color:#174b61;
+}
+
+
+.gingiva-intro span{
+
+    color:#78909c;
+
+    font-size:11px;
+}
+
+
+/* =========================================================
+   ATTACHED GINGIVA TABLE
+========================================================= */
+
+.gingiva-table-wrapper{
+
+    border:1px solid #d7e0e3;
+
+    border-radius:9px;
+
+    overflow:hidden;
+
+    margin-top:10px;
+}
+
+
+.gingiva-table-wrapper table{
+
+    width:100%;
+
+    border-collapse:collapse;
+}
+
+
+.gingiva-table-wrapper thead th{
+
+    background:#174b61;
+
+    color:white;
+
+    padding:10px 8px;
+
+    font-size:11px;
+
+    text-align:center;
+
+    font-weight:bold;
+}
+
+
+.gingiva-table-wrapper tbody td{
+
+    padding:8px;
+
+    font-size:11.5px;
+
+    text-align:center;
+
+    border-bottom:1px solid #e3eaed;
+}
+
+
+.gingiva-table-wrapper tbody tr:nth-child(even){
+
+    background:#fafcfd;
+}
+
+
+.gingiva-table-wrapper tbody tr:last-child td{
+
+    border-bottom:none;
+}
+
+
+.tooth-number{
+
+    font-weight:bold;
+
+    color:#174b61;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+.status-adequate{
+
+    display:inline-block;
+
+    padding:4px 10px;
+
+    border-radius:12px;
+
+    background:#e8f5e9;
+
+    color:#2e7d32;
+
+    font-weight:bold;
+
+    font-size:10px;
+}
+
+
+.status-inadequate{
+
+    display:inline-block;
+
+    padding:4px 10px;
+
+    border-radius:12px;
+
+    background:#fff3e0;
+
+    color:#e65100;
+
+    font-weight:bold;
+
+    font-size:10px;
+}
+
+
+.status-not-detected{
+
+    display:inline-block;
+
+    padding:4px 10px;
+
+    border-radius:12px;
+
+    background:#eceff1;
+
+    color:#546e7a;
+
+    font-weight:bold;
+
+    font-size:10px;
+}
+
+
+/* =========================================================
+   GINGIVA SUMMARY
+========================================================= */
+
+.gingiva-summary{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:10px;
+
+    margin-top:12px;
+}
+
+
+.gingiva-summary-item{
+
+    text-align:center;
+
+    background:#fafcfd;
+
+    border:1px solid #dce6ea;
+
+    border-radius:8px;
+
+    padding:10px;
+}
+
+
+.summary-number{
+
+    display:block;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    color:#176b87;
+}
+
+
+.summary-label{
+
+    display:block;
+
+    margin-top:3px;
+
+    font-size:9px;
+
+    color:#78909c;
+}
+
+
+/* =========================================================
+   CLINICAL SUMMARY
+========================================================= */
+
+.summary-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:10px;
+}
+
+
+.summary-card{
+
+    padding:12px;
+
+    border:1px solid #dce6ea;
+
+    border-radius:8px;
+
+    background:#fafcfd;
+
+    text-align:center;
+}
+
+
+.summary-card .number{
+
+    font-size:19px;
+
+    font-weight:bold;
+
+    color:#176b87;
+}
+
+
+.summary-card .label{
+
+    margin-top:4px;
+
+    font-size:10px;
+
+    color:#78909c;
+}
+
+
+/* =========================================================
+   CLINICAL PERIODONTAL TABLE
+========================================================= */
+
+.table-wrapper{
+
+    border:1px solid #d7e0e3;
+
+    border-radius:9px;
+
+    overflow:hidden;
+}
+
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+}
+
+
+thead th{
+
+    background:#174b61;
+
+    color:white;
+
+    padding:9px 6px;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+    text-transform:uppercase;
+
+    letter-spacing:0.3px;
+}
+
+
+tbody td{
+
+    border-bottom:1px solid #e6ecef;
+
+    padding:7px 6px;
+
+    text-align:center;
+
+    font-size:11px;
+
+    color:#37474f;
+}
+
+
+tbody tr:last-child td{
+
+    border-bottom:none;
+}
+
+
+tbody tr:nth-child(even){
+
+    background:#fafcfd;
+}
+
+
+/* =========================================================
+   MISSING TOOTH
+========================================================= */
+
+.missing-tooth{
+
+    background:#fff1f1 !important;
+
+    color:#b71c1c !important;
+
+    font-weight:bold;
+}
+
+
+.missing-tooth td{
+
+    color:#b71c1c !important;
+}
+
+
+.missing-label{
+
+    display:inline-block;
+
+    padding:3px 7px;
+
+    border-radius:4px;
+
+    background:#c62828;
+
+    color:white;
+
+    font-size:8px;
+
+    font-weight:bold;
+
+    letter-spacing:0.3px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer{
+
+    margin-top:35px;
+
+    padding-top:20px;
+
+    border-top:1px solid #cfd8dc;
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:40px;
+}
+
+
+.signature{
+
+    text-align:center;
+
+    color:#455a64;
+
+    font-size:11px;
+}
+
+
+.signature-line{
+
+    border-top:1px solid #607d8b;
+
+    margin-top:45px;
+
+    padding-top:7px;
+}
+
+
+/* =========================================================
+   DISCLAIMER
+========================================================= */
+
+.note{
+
+    margin-top:22px;
+
+    padding:11px 14px;
+
+    background:#f7f9fa;
+
+    border:1px solid #e1e7e9;
+
+    border-radius:7px;
+
+    font-size:9.5px;
+
+    line-height:1.5;
+
+    color:#607d8b;
+
+    text-align:center;
+}
+
+
+/* =========================================================
+   PRINT BUTTON
+========================================================= */
+
+.print-area{
+
+    text-align:center;
+
+    margin-top:25px;
+}
+
+
+.btn{
+
+    background:#176b87;
+
+    color:white;
+
+    border:none;
+
+    padding:11px 24px;
+
+    border-radius:7px;
+
+    cursor:pointer;
+
+    font-size:13px;
+
+    font-weight:bold;
+}
+
+
+.btn:hover{
+
+    background:#124f64;
+}
+
+
+/* =========================================================
+   PRINT SETTINGS
+========================================================= */
+
+@media print{
+
+    body{
+
+        background:white;
+
+        padding:0;
+    }
+
+
+    .report-container{
+
+        width:100%;
+
+        min-height:auto;
+
+        margin:0;
+
+        padding:10mm 8mm;
+
+        box-shadow:none;
+    }
+
+
+    .print-area{
+
+        display:none;
+    }
+
+
+    @page{
+
+        size:A4;
+
+        margin:8mm;
+    }
+
+
+    .section{
+
+        break-inside:avoid;
+    }
+
+
+    .image-card{
+
+        break-inside:avoid;
+    }
+
+
+    table{
+
+        page-break-inside:auto;
+    }
+
+
+    tr{
+
+        page-break-inside:avoid;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:900px){
+
+    body{
+
+        padding:10px;
+    }
+
+
+    .report-container{
+
+        width:100%;
+
+        padding:20px;
+    }
+
+
+    .header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:12px;
+    }
+
+
+    .report-meta{
+
+        text-align:left;
+    }
+
+
+    .info-grid,
+    .image-grid,
+    .diagnosis-details,
+    .summary-grid,
+    .gingiva-summary{
+
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+}
+
+</style>
+
 </head>
+
 
 <body>
 
-<h1>PERIODONTAL AI ASSESSMENT REPORT</h1>
 
-<!-- DEMOGRAPHICS -->
-<h2>Patient Information</h2>
-<div class="grid">
-    <div class="box">
-        <p><b>Name:</b> <span id="r_name"></span></p>
-        <p><b>Age:</b> <span id="r_age"></span></p>
-        <p><b>Gender:</b> <span id="r_gender"></span></p>
+<div class="report-container">
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<div class="header">
+
+
+    <div class="brand">
+
+
+        <div class="logo">
+            LP
+        </div>
+
+
+        <div>
+
+            <h1>
+                LONA-PerioAI
+            </h1>
+
+            <div class="subtitle">
+                AI-Assisted Periodontal Assessment Report
+            </div>
+
+        </div>
+
+
     </div>
 
-    <div class="box">
-        <p><b>Patient ID:</b> <span id="r_id"></span></p>
-        <p><b>Medical History:</b> <span id="r_history"></span></p>
-        <p><b>Medication:</b> <span id="r_medication"></span></p>
+
+    <div class="report-meta">
+
+        <div>
+            <b>Clinical Assessment Report</b>
+        </div>
+
+        <div>
+            Generated:
+            {{ data.date }}
+        </div>
+
     </div>
+
+
 </div>
 
-<!-- CLINICAL TABLE -->
-<h2>Clinical Periodontal Chart</h2>
 
-<table id="reportTable">
-    <tr>
-        <th>Tooth</th>
-        <th>PD</th>
-        <th>CAL</th>
-        <th>BOP</th>
-        <th>Recession</th>
-        <th>Furcation</th>
-        <th>Enlargement</th>
-    </tr>
-</table>
 
-<!-- AI -->
-<h2>AI Analysis</h2>
+<!-- =====================================================
+     01 PATIENT INFORMATION
+===================================================== -->
 
-<p><b>Uploaded Image:</b></p>
-<img id="r_image" width="300">
+<div class="section">
 
-<p><b>AI Findings:</b></p>
-<ul id="r_findings"></ul>
 
-<!-- DIAGNOSIS -->
-<h2>Diagnosis</h2>
-<p id="r_diagnosis" class="highlight"></p>
+    <div class="section-title">
 
-<!-- MANAGEMENT -->
-<h2>Management Recommendation</h2>
-<p id="r_management" class="highlight"></p>
+        <span class="section-number">
+            01
+        </span>
 
-<p class="note">
-This report is AI-assisted and should be confirmed by a dental professional.
-</p>
+        Patient Information
 
-<button class="btn" onclick="window.print()">Download PDF</button>
+    </div>
 
-<script>
-/* LOAD DATA FROM LOCAL STORAGE */
-let data = JSON.parse(localStorage.getItem("reportData"))
 
-if(data){
-    document.getElementById("r_name").innerText = data.name
-    document.getElementById("r_age").innerText = data.age
-    document.getElementById("r_gender").innerText = data.gender
-    document.getElementById("r_id").innerText = data.id
-    document.getElementById("r_history").innerText = data.history
-    document.getElementById("r_medication").innerText = data.medication
+    <div class="info-grid">
 
-    document.getElementById("r_diagnosis").innerText = data.diagnosis
-    document.getElementById("r_management").innerText = data.management
 
-    document.getElementById("r_image").src = data.image
+        <div class="info-box">
 
-    /* AI findings */
-    let ul = document.getElementById("r_findings")
-    data.findings.forEach(f => {
-        let li = document.createElement("li")
-        li.innerText = f
-        ul.appendChild(li)
-    })
+            <span class="info-label">
+                Patient Name
+            </span>
 
-    /* TABLE */
-    let table = document.getElementById("reportTable")
+            <span class="info-value">
+                {{ data.demographics.name or "Not provided" }}
+            </span>
 
-    data.teeth.forEach(t => {
-        let row = table.insertRow()
+        </div>
 
-        row.innerHTML = `
-            <td>${t.tooth}</td>
-            <td>${t.pd}</td>
-            <td>${t.cal}</td>
-            <td>${t.bop}</td>
-            <td>${t.rec}</td>
-            <td>${t.furcation}</td>
-            <td>${t.enl}</td>
-        `
-    })
-}
-</script>
+
+        <div class="info-box">
+
+            <span class="info-label">
+                Patient ID
+            </span>
+
+            <span class="info-value">
+                {{ data.demographics.patientId or "Not provided" }}
+            </span>
+
+        </div>
+
+
+        <div class="info-box">
+
+            <span class="info-label">
+                Age
+            </span>
+
+            <span class="info-value">
+                {{ data.demographics.age or "—" }}
+            </span>
+
+        </div>
+
+
+        <div class="info-box">
+
+            <span class="info-label">
+                Gender
+            </span>
+
+            <span class="info-value">
+                {{ data.demographics.gender or "—" }}
+            </span>
+
+        </div>
+
+
+        <div class="info-box">
+
+            <span class="info-label">
+                Medical History
+            </span>
+
+            <span class="info-value">
+                {{ data.demographics.medicalHistory or "None reported" }}
+            </span>
+
+        </div>
+
+
+        <div class="info-box">
+
+            <span class="info-label">
+                Medication
+            </span>
+
+            <span class="info-value">
+                {{ data.demographics.medication or "None reported" }}
+            </span>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     02 PERIODONTAL DIAGNOSIS
+===================================================== -->
+
+<div class="section">
+
+
+    <div class="section-title">
+
+        <span class="section-number">
+            02
+        </span>
+
+        Periodontal Diagnosis
+
+    </div>
+
+
+    <div class="diagnosis-box">
+
+
+        <div class="diagnosis-header">
+
+            EFP 2018 Periodontal Classification
+
+        </div>
+
+
+        <div class="diagnosis-body">
+
+
+            <div class="diagnosis-main">
+
+                {{ data.diagnosis or "Diagnosis not available" }}
+
+            </div>
+
+
+            <div class="diagnosis-details">
+
+
+                <div class="diagnosis-item">
+
+                    <span class="label">
+                        Bone Loss
+                    </span>
+
+                    <span class="value">
+                        {{ data.bone_loss or "—" }}%
+                    </span>
+
+                </div>
+
+
+                <div class="diagnosis-item">
+
+                    <span class="label">
+                        EFP Stage
+                    </span>
+
+                    <span class="value">
+                        {{ data.efp_stage or "—" }}
+                    </span>
+
+                </div>
+
+
+                <div class="diagnosis-item">
+
+                    <span class="label">
+                        BOP
+                    </span>
+
+                    <span class="value">
+                        {{ data.clinical.bopPercent or "—" }}%
+                    </span>
+
+                </div>
+
+
+                <div class="diagnosis-item">
+
+                    <span class="label">
+                        Periodontal Tooth Loss
+                    </span>
+
+                    <span class="value">
+                        {{ data.periodontal_tooth_loss or "0" }}
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     03 CLINICAL & RADIOGRAPHIC IMAGES
+===================================================== -->
+
+<div class="section">
+
+
+    <div class="section-title">
+
+        <span class="section-number">
+            03
+        </span>
+
+        Clinical & Radiographic Images
+
+    </div>
+
+
+    <div class="image-grid">
+
+
+        <div class="image-card">
+
+            <h3>
+                Intraoral Clinical Image
+            </h3>
+
+
+            {% if data.clinical_image %}
+
+                <img
+                    src="{{ data.clinical_image }}"
+                    alt="Intraoral clinical image"
+                >
+
+            {% else %}
+
+                <p>
+                    No clinical image available
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="image-card">
+
+            <h3>
+                Radiographic Image
+            </h3>
+
+
+            {% if data.radiographic_image %}
+
+                <img
+                    src="{{ data.radiographic_image }}"
+                    alt="Radiographic image"
+                >
+
+            {% else %}
+
+                <p>
+                    No radiographic image available
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     04 AI FINDINGS
+===================================================== -->
+
+<div class="section">
+
+
+    <div class="section-title">
+
+        <span class="section-number">
+            04
+        </span>
+
+        AI Findings
+
+    </div>
+
+
+    <div class="findings-box">
+
+
+        {% if data.findings %}
+
+            <ul>
+
+                {% for f in data.findings %}
+
+                    <li>
+                        {{ f }}
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+        {% else %}
+
+            <p>
+                No additional AI findings recorded.
+            </p>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     05 ATTACHED GINGIVA ASSESSMENT
+===================================================== -->
+
+<div class="section">
+
+
+    <div class="section-title">
+
+        <span class="section-number">
+            05
+        </span>
+
+        Attached Gingiva Assessment
+
+    </div>
+
+
+    <div class="gingiva-intro">
+
+
+        <b>
+            AI-estimated Width of Attached Gingiva
+        </b>
+
+
+        <br>
+
+
+        <span>
+
+            Tooth-wise assessment of attached gingiva
+            width from the intraoral image.
+
+        </span>
+
+
+    </div>
+
+
+
+    <div class="gingiva-table-wrapper">
+
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Tooth
+                    </th>
+
+                    <th>
+                        Arch
+                    </th>
+
+                    <th>
+                        Width of Attached Gingiva
+                    </th>
+
+                    <th>
+                        Assessment
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            {% for g in data.attached_gingiva_results %}
+
+
+                <tr>
+
+
+                    <td class="tooth-number">
+
+                        {{ g.tooth_number }}
+
+                    </td>
+
+
+                    <td>
+
+                        {{ g.arch|capitalize }}
+
+                    </td>
+
+
+                    <td>
+
+
+                        {% if g.attached_gingiva_width_mm is not none %}
+
+                            {{ "%.2f"|format(
+                                g.attached_gingiva_width_mm
+                            ) }} mm
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+
+                    </td>
+
+
+                    <td>
+
+
+                        {% if g.status == "Adequate" %}
+
+
+                            <span class="status-adequate">
+
+                                Adequate
+
+                            </span>
+
+
+                        {% elif g.status == "Inadequate" %}
+
+
+                            <span class="status-inadequate">
+
+                                Inadequate
+
+                            </span>
+
+
+                        {% else %}
+
+
+                            <span class="status-not-detected">
+
+                                Not Detected
+
+                            </span>
+
+
+                        {% endif %}
+
+
+                    </td>
+
+
+                </tr>
+
+
+            {% endfor %}
+
+
+            </tbody>
+
+
+        </table>
+
+
+    </div>
+
+
+
+    <!-- ATTACHED GINGIVA SUMMARY -->
+
+
+    <div class="gingiva-summary">
+
+
+        <div class="gingiva-summary-item">
+
+
+            <span class="summary-number">
+
+                {{ data.attached_gingiva_results|length }}
+
+            </span>
+
+
+            <span class="summary-label">
+
+                Teeth Assessed
+
+            </span>
+
+
+        </div>
+
+
+
+        <div class="gingiva-summary-item">
+
+
+            <span class="summary-number">
+
+                {{ data.attached_gingiva_adequate or 0 }}
+
+            </span>
+
+
+            <span class="summary-label">
+
+                Adequate
+
+            </span>
+
+
+        </div>
+
+
+
+        <div class="gingiva-summary-item">
+
+
+            <span class="summary-number">
+
+                {{ data.attached_gingiva_inadequate or 0 }}
+
+            </span>
+
+
+            <span class="summary-label">
+
+                Inadequate
+
+            </span>
+
+
+        </div>
+
+
+
+        <div class="gingiva-summary-item">
+
+
+            <span class="summary-number">
+
+                {{ data.attached_gingiva_not_detected or 0 }}
+
+            </span>
+
+
+            <span class="summary-label">
+
+                Not Detected
+
+            </span>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     06 CLINICAL SUMMARY
+===================================================== -->
+
+<div class="section">
+
+
+    <div class="section-title">
+
+        <span class="section-number">
+            06
+        </span>
+
+        Clinical Summary
+
+    </div>
+
+
+    <div class="summary-grid">
+
+
+        <div class="summary-card">
+
+            <div class="number">
+
+                {{ data.clinical.toothChartData|length }}
+
+            </div>
+
+            <div class="label">
+
+                Teeth Charted
+
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="number">
+
+                {{ data.clinical.bopPercent or "0" }}%
+
+            </div>
+
+            <div class="label">
+
+                BOP
+
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="number">
+
+                {{ data.periodontal_tooth_loss or "0" }}
+
+            </div>
+
+            <div class="label">
+
+                Periodontal Tooth Loss
+
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="number">
+
+                {{ data.bone_loss or "0" }}%
+
+            </div>
+
+            <div class="label">
+
+                Radiographic Bone Loss
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     07 CLINICAL PERIODONTAL CHART
+===================================================== -->
+
+<div class="section">
+
+
+    <div class="section-title">
+
+        <span class="section-number">
+            07
+        </span>
+
+        Clinical Periodontal Chart
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Tooth
+                    </th>
+
+                    <th>
+                        PD
+                    </th>
+
+                    <th>
+                        CAL
+                    </th>
+
+                    <th>
+                        BOP
+                    </th>
+
+                    <th>
+                        REC
+                    </th>
+
+                    <th>
+                        FURC
+                    </th>
+
+                    <th>
+                        ENL
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            {% for t in data.clinical.toothChartData %}
+
+
+                <tr
+                    class="{% if t.status == 'Missing' %}missing-tooth{% endif %}"
+                >
+
+
+                    <td class="tooth-number">
+
+                        {{ t.tooth }}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if t.status == "Missing" %}
+
+                            —
+
+                        {% else %}
+
+                            {{ t.pd }}
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if t.status == "Missing" %}
+
+                            —
+
+                        {% else %}
+
+                            {{ t.cal }}
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if t.status == "Missing" %}
+
+                            —
+
+                        {% else %}
+
+                            {{ t.bop }}
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if t.status == "Missing" %}
+
+                            —
+
+                        {% else %}
+
+                            {{ t.rec }}
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if t.status == "Missing" %}
+
+                            —
+
+                        {% else %}
+
+                            {{ t.furcation }}
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if t.status == "Missing" %}
+
+                            —
+
+                        {% else %}
+
+                            {{ t.enl }}
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+
+                        {% if t.status == "Missing" %}
+
+
+                            <span class="missing-label">
+
+                                MISSING
+
+                            </span>
+
+
+                        {% else %}
+
+                            Present
+
+                        {% endif %}
+
+
+                    </td>
+
+
+                </tr>
+
+
+            {% endfor %}
+
+
+            </tbody>
+
+
+        </table>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     SIGNATURE
+===================================================== -->
+
+<div class="footer">
+
+
+    <div class="signature">
+
+        <div class="signature-line">
+
+            Clinician Signature
+
+        </div>
+
+    </div>
+
+
+    <div class="signature">
+
+        <div class="signature-line">
+
+            AI Assessment Generated
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     DISCLAIMER
+===================================================== -->
+
+<div class="note">
+
+
+    <b>
+        LONA-PerioAI — Clinical Decision Support
+    </b>
+
+
+    <br>
+
+
+    This report is AI-assisted and intended to support
+    periodontal assessment. AI-generated findings should be
+    clinically reviewed and confirmed by a qualified dental
+    professional before diagnosis or treatment planning.
+
+
+</div>
+
+
+
+<!-- =====================================================
+     PRINT
+===================================================== -->
+
+<div class="print-area">
+
+
+    <button
+        class="btn"
+        onclick="window.print()"
+    >
+
+        Print / Save as PDF
+
+    </button>
+
+
+</div>
+
+
+</div>
+
 
 </body>
+
 </html>
