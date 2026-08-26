@@ -1,38 +1,25 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>AI Periodontal Assessment Tool</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
 
 <h1>AI Periodontal Assessment Tool</h1>
 
-<div class="nav">
-    <button onclick="showStage(1)">Demographics</button>
-    <button onclick="showStage(2)">Clinical Chart</button>
-    <button onclick="showStage(3)">AI Analysis</button>
-    <button onclick="showStage(4)">Diagnosis</button>
-    <button onclick="showStage(5)">View Saved Charts</button>
-</div>
-
 <!-- STAGE 1 -->
 <div id="stage1" class="stage">
     <h2>Patient Demographics</h2>
-
     <div class="grid">
         <div>
             <label>Name</label>
             <input type="text" id="patientName">
         </div>
-
         <div>
             <label>Age</label>
             <input type="number" id="age">
         </div>
-
         <div>
             <label>Gender</label>
             <select id="gender">
@@ -41,23 +28,38 @@
                 <option>Other</option>
             </select>
         </div>
-
         <div>
             <label>Patient ID</label>
             <input type="text" id="patientId">
         </div>
-
         <div class="full">
             <label>Medical History</label>
             <textarea id="medicalHistory"></textarea>
         </div>
-
+        <!-- Smoking -->
+        <div>
+            <label>Smoking (Cigarettes/day)</label>
+            <input
+                type="number"
+                id="smokingPerDay"
+                min="0"
+                value="0">
+        </div>
+        <!-- HbA1c -->
+        <div>
+            <label>HbA1c (%)</label>
+            <input
+                type="number"
+                id="hba1c"
+                step="0.1"
+                min="0"
+                value="0">
+        </div>
         <div class="full">
             <label>Medication</label>
             <input type="text" id="medication">
         </div>
     </div>
-
     <br>
     <button onclick="showStage(2)">Next</button>
 </div>
@@ -86,9 +88,7 @@
         <div class="tooth" id="t27" onclick="openTooth(27)">🦷27</div>
         <div class="tooth" id="t28" onclick="openTooth(28)">🦷28</div>
     </div>
-
     <hr>
-
     <div class="tooth-row">
         <!-- Teeth lower right -->
         <div class="tooth" id="t48" onclick="openTooth(48)">🦷48</div>
@@ -110,15 +110,47 @@
         <div class="tooth" id="t37" onclick="openTooth(37)">🦷37</div>
         <div class="tooth" id="t38" onclick="openTooth(38)">🦷38</div>
     </div>
-
     <br>
-    <p id="bopPrev"></p>
+    <h3 id="bopPrev">BOP Percentage: 0%</h3>
+    <h3 id="teethLostPrev">Teeth Lost (Periodontitis): 0</h3>
+    <button onclick="showStage(1)">Back</button>
     <button onclick="showStage(3)">Next</button>
 </div>
 
 <!-- TOOTH POPUP -->
 <div id="popup" class="popup">
     <h3 id="toothTitle"></h3>
+
+    <!-- ✅ Tooth Status (EFP tooth-loss criterion) -->
+    <label><b>Tooth Status</b></label>
+    <select id="toothStatus" onchange="toggleMissingReason()">
+        <option value="present">Present</option>
+        <option value="missing">Missing</option>
+    </select>
+    <!-- =========================
+         REASON FOR MISSING TOOTH
+    ========================= -->
+    <div id="missingReasonBox" style="display:none; margin-top:10px;">
+        <label><b>Reason for Missing Tooth</b></label>
+        <select id="missingReason">
+            <option value="periodontitis">
+                Periodontitis
+            </option>
+            <option value="caries">
+                Caries
+            </option>
+            <option value="trauma">
+                Trauma
+            </option>
+            <option value="congenital">
+                Congenital / Developmental
+            </option>
+            <option value="other">
+                Other
+            </option>
+        </select>
+    </div>
+    <hr>
 
     <label>Probing Depth (6 sites)</label>
     <div class="site-grid">
@@ -147,7 +179,7 @@
     </select>
 
     <label>Furcation</label>
-    <select>
+    <select id="furcation">
         <option>None</option>
         <option>Grade I</option>
         <option>Grade II</option>
@@ -162,57 +194,122 @@
 
 <!-- STAGE 3 -->
 <div id="stage3" class="stage" style="display:none">
-    <h2>🧠 AI Mucogingival Analysis</h2>
+    <h2>🧠 AI Mucogingival & Radiographic Analysis</h2>
 
-    <p>Upload intraoral image</p>
-    <input type="file" id="imageUpload">
+    <!-- ================= GUIDELINES ================= -->
+    <div style="background:#fff3cd; padding:15px; border-radius:10px; margin-bottom:15px;">
+        <h3>📸 Image Capture Guidelines</h3>
+        <ul>
+            <li>Keep camera 15--20 cm from teeth</li>
+            <li>Capture straight (no tilt)</li>
+            <li>Include full gingiva and teeth</li>
+            <li>Use cheek retraction</li>
+            <li>Use bright lighting, avoid shadows, avoid glare</li>
+            <li>Ensure image is clear (no blur)</li>
+            <li>Click two points on tooth to set scale</li>
+        </ul>
+    </div>
 
-    <br><br>
-    <button onclick="runAI()">Run AI Analysis</button>
-
-    <br><br>
-    <button onclick="showStage(4)">Next</button>
-
-    <!-- Findings Section -->
+    <!-- ================= INTRAORAL ================= -->
     <div class="card">
-        <h3>AI Findings</h3>
+        <h3>🦷 Intraoral AI Analysis</h3>
+        <p>Upload intraoral image</p>
+        <input type="file" id="imageUpload" accept="image/*">
+        <br><br>
+        <button onclick="runAI()">Run Intraoral AI Analysis</button>
+        <br><br>
+        <img id="resultImage" style="max-width:300px; display:none; border-radius:10px;">
+    </div>
+
+    <hr>
+
+    <!-- ================= RADIOGRAPH ================= -->
+    <div class="card">
+        <h3>🦴 Radiographic AI Analysis (EFP Support)</h3>
+        <p>Upload IOPA / OPG image</p>
+        <input type="file" id="rxUpload" accept="image/*">
+        <br><br>
+        <button onclick="runRadiographicAI()">Run Radiographic Analysis</button>
+        <br><br>
+        <img id="rxResultImage"
+            style="max-width:300px;
+                display:none;
+                border-radius:10px;">
+        <p style="color:gray;">
+            Bone loss % + EFP stage will be calculated
+        </p>
+    </div>
+
+    <!-- ================= OUTPUT ================= -->
+    <div class="card">
+        <h3>📊 Radiographic Output</h3>
+        <p id="boneLoss">Bone Loss: -</p>
+        <p id="efpStage">EFP Stage: -</p>
+    </div>
+
+    <!-- ================= FINDINGS ================= -->
+    <div class="card">
+        <h3>🧠 AI Findings</h3>
         <ul id="findings"></ul>
     </div>
 
-    <!-- Output Image Section -->
+    <!-- ================= TABLE ================= -->
     <div class="card">
-        <h3>AI Output</h3>
-        <img id="resultImage" style="max-width: 400px; display:none; border-radius:10px; margin-top:10px;">
+        <h3>🦷 Tooth-wise Results</h3>
+        <table id="resultTable" style="display:none; width:100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>Tooth</th>
+                    <th>Arch</th>
+                    <th>Width (mm)</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
-</div>
 
+    <br>
+    <button onclick="showStage(2)">Back</button>
+    <button onclick="showStage(4)">Next</button>
+</div>
 
 <!-- STAGE 4 -->
 <div id="stage4" class="stage" style="display:none">
     <h2>Diagnosis</h2>
     <button onclick="generateDiagnosis()">Generate Diagnosis</button>
     <p id="diagnosis"></p>
-
     <button onclick="savePatientData()">💾 Save</button>
-
     <br><br>
+    <button onclick="showStage(3)">Back</button>
     <button onclick="showStage(5)">Next</button>
 </div>
 
 <!-- STAGE 5 -->
 <div id="stage5" class="stage" style ="display:none">
     <h2>Saved Clinical Charts</h2>
-
+    <button onclick="showStage(4)">Back</button>
     <button onclick="loadPatients()">Load Patients</button>
-
     <div id="patientList"></div>
+
+<hr>
+
+<div id="reportSection" style="display:none;">
+    <h2>Patient Report</h2>
+    <p><b>Name:</b> <span id="r_name"></span></p>
+    <p><b>Age:</b> <span id="r_age"></span></p>
+    <p><b>Diagnosis:</b> <span id="r_diagnosis"></span></p>
+    <p><b>Bone Loss:</b> <span id="r_bone_loss"></span></p>
+    <br>
+    <img id="r_intraoral"
+        style="max-width:300px; border:1px solid #ccc;">
+    <img id="r_radiograph"
+        style="max-width:300px; border:1px solid #ccc;">
 </div>
 
 <!-- jsPDF library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <!-- LINK JS FILE -->
 <script src="{{ url_for('static', filename='script.js') }}"></script>
-
 </body>
 </html>
